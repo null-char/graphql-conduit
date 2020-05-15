@@ -5,13 +5,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { CommentEntity } from '@/comment/comment.entity';
+import { UserEntity } from '@/user/user.entity';
 
 @Entity('article')
 export class ArticleEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
+
+  @Column()
+  authorId: number;
 
   @Column()
   title: string;
@@ -41,5 +47,11 @@ export class ArticleEntity {
   )
   comments: CommentEntity[];
 
-  // TODO: Add ManyToOne relationship with UserEntity with authorId as FK referencing id from UserEntity
+  @ManyToOne(
+    type => UserEntity,
+    user => user.articles,
+    { eager: true },
+  )
+  @JoinColumn({ name: 'authorId', referencedColumnName: 'id' })
+  author: UserEntity;
 }
