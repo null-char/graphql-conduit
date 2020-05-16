@@ -1,29 +1,40 @@
 import { Resolver, Query, Args, Int, Mutation } from '@nestjs/graphql';
 import { Article } from '@/article/article.model';
 import { ArticleService } from '@/article/article.service';
-import { CreateArticleInput } from '@/article/create-article.input';
-import { EditArticleInput } from '@/article/edit-article.input';
+import { CreateArticleInput } from '@/article/input/create-article.input';
+import { EditArticleInput } from '@/article/input/edit-article.input';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '@/auth/gql-auth.guard';
+import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
 import { GetUser } from '@/shared/get-user.decorator';
 import { UserEntity } from '@/user/user.entity';
+import { FilterArticlesInput } from '@/article/input/filter-articles.input';
+import { Favorite } from '@/article/favorite.model';
+import { OptionalAuthGuard } from '@/auth/guard/optional-auth.guard';
 
 @Resolver(of => Article)
 export class ArticleResolver {
   constructor(private articleService: ArticleService) {}
 
   @Query(returns => Article, { name: 'article' })
+  @UseGuards(OptionalAuthGuard)
   public async getArticle(
     @Args('id', { type: () => Int }) id: number,
+    @GetUser() user: UserEntity | undefined,
   ): Promise<Article> {
-    return this.articleService.getArticle(id);
+    return this.articleService.getArticle(id, user);
   }
 
-  @Query(returns => [Article], { name: 'articlesTaggedWith' })
-  public async getArticlesTaggedWith(
-    @Args('tags', { type: () => [String] }) tags: string[],
+  @Query(returns => [Article], { name: 'articles' })
+  @UseGuards(OptionalAuthGuard)
+  public async getArticles(
+    @Args('filterArticlesInput', {
+      type: () => FilterArticlesInput,
+      nullable: true,
+    })
+    filterArticlesInput: FilterArticlesInput,
+    @GetUser() user: UserEntity | undefined,
   ): Promise<Article[]> {
-    return this.articleService.getArticlesTaggedWith(tags);
+    return this.articleService.getArticles(filterArticlesInput, user);
   }
 
   @Mutation(returns => Article)
@@ -44,5 +55,14 @@ export class ArticleResolver {
     @GetUser() user: UserEntity,
   ): Promise<Article> {
     return this.articleService.editArticle(editArticleInput, user);
+  }
+
+  @Mutation(returns => Favorite)
+  @UseGuards(GqlAuthGuard)
+  public async favoriteArticle(
+    @Args('id', { type: () => Int }) id: number,
+    @GetUser() user: UserEntity,
+  ): Promise<Favorite> {
+    return this.articleService.favoriteArticle(id, user);
   }
 }
