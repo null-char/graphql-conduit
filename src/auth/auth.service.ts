@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@/user/user.service';
-import { CreateUserInput } from '@/auth/input/create-user.input';
+import { RegisterUserInput } from '@/auth/input/register-user.input';
 import { Profile } from '@/profile/profile.model';
 import { UserEntity } from '@/user/user.entity';
 import { JwtPayload } from '@/auth/jwt-payload.interface';
@@ -19,7 +19,7 @@ export class AuthService {
     @InjectRepository(UserRepository) private userRepository: UserRepository,
   ) {}
 
-  public async register(createUserInput: CreateUserInput): Promise<Profile> {
+  public async register(createUserInput: RegisterUserInput): Promise<Profile> {
     const { username, password, email } = createUserInput;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);

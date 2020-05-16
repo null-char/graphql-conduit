@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { Profile } from '@/profile/profile.model';
-import { CreateUserInput } from '@/auth/input/create-user.input';
+import { RegisterUserInput } from '@/auth/input/register-user.input';
 import { AuthService } from '@/auth/auth.service';
 import { LoginUserInput } from '@/auth/input/login-user.input';
 import { ProfileAndToken } from '@/auth/profile-and-token.type';
@@ -13,8 +13,8 @@ export class AuthResolver {
 
   @Mutation(returns => Profile)
   public async registerUser(
-    @Args('createUserInput', { type: () => CreateUserInput })
-    createUserInput: CreateUserInput,
+    @Args('createUserInput', { type: () => RegisterUserInput })
+    createUserInput: RegisterUserInput,
   ): Promise<Profile> {
     return this.authService.register(createUserInput);
   }
