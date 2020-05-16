@@ -7,6 +7,7 @@ import { JwtStrategy } from '@/auth/jwt.strategy';
 import { SetJwtCookieInterceptor } from '@/auth/set-jwt-cookie.interceptor';
 import { GqlAuthGuard } from '@/auth/gql-auth.guard';
 import { AuthResolver } from '@/auth/auth.resolver';
+import { OptionalAuthGuard } from '@/auth/optional-auth.guard';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { AuthResolver } from '@/auth/auth.resolver';
     JwtStrategy,
     SetJwtCookieInterceptor,
     GqlAuthGuard,
+    OptionalAuthGuard,
   ],
-  exports: [GqlAuthGuard],
+  exports: [GqlAuthGuard, OptionalAuthGuard],
 })
 export class AuthModule {}
