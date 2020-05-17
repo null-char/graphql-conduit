@@ -18,7 +18,7 @@ export class ArticleEntity {
   id: number;
 
   @Column()
-  authorId: number;
+  authorUsername: string;
 
   @Column()
   title: string;
@@ -45,14 +45,12 @@ export class ArticleEntity {
   @OneToMany(
     type => CommentEntity,
     comment => comment.article,
-    { eager: true },
   )
   comments: CommentEntity[];
 
   @ManyToOne(
     type => UserEntity,
     user => user.articles,
-    { eager: true },
   )
   @JoinColumn({ name: 'authorId', referencedColumnName: 'id' })
   author: UserEntity;
