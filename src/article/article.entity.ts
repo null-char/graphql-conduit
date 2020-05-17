@@ -52,6 +52,6 @@ export class ArticleEntity {
     type => UserEntity,
     user => user.articles,
   )
-  @JoinColumn({ name: 'authorId', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'authorUsername', referencedColumnName: 'username' })
   author: UserEntity;
 }
