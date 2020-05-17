@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Check,
 } from 'typeorm';
 import { CommentEntity } from '@/comment/comment.entity';
 import { UserEntity } from '@/user/user.entity';
@@ -38,6 +39,7 @@ export class ArticleEntity {
   updatedAt: Date;
 
   @Column({ default: 0 })
+  @Check(`"favoritesCount" >= 0`)
   favoritesCount: number;
 
   @OneToMany(
