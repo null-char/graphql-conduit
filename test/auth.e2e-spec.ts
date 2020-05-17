@@ -16,7 +16,7 @@ import {
 import gql from 'graphql-tag';
 import { TestingOrmConfig } from '@/config/testing-orm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Profile } from '@/profile/profile.model';
+import { Profile } from '@/user/profile.model';
 import { RegisterUserInput } from '@/auth/input/register-user.input';
 import { LoginUserInput } from '@/auth/input/login-user.input';
 import { SetJwtCookieInterceptor } from '@/auth/set-jwt-cookie.interceptor';
@@ -57,7 +57,7 @@ describe('AuthModule', () => {
 
   describe('Registration', () => {
     const REGISTER_MUTATION = gql`
-      mutation registerUser($createUserInput: CreateUserInput!) {
+      mutation registerUser($createUserInput: RegisterUserInput!) {
         registerUser(createUserInput: $createUserInput) {
           username
           bio
