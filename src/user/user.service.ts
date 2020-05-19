@@ -72,5 +72,34 @@ export class UserService {
     const followee = await this.userRepository.findUserByUsername(
       followeeUsername,
     );
+    await this.followsRepository.insert({
+      follower: user.id,
+      followee: followee.id,
+    });
+    followee.followersCount += 1;
+
+    return {
+      ...(await this.userRepository.save(followee)),
+      following: true,
+    };
+  }
+
+  public async unfollowUser(
+    user: UserEntity,
+    followeeUsername: string,
+  ): Promise<Profile> {
+    const followee = await this.userRepository.findUserByUsername(
+      followeeUsername,
+    );
+    await this.followsRepository.delete({
+      follower: user.id,
+      followee: followee.id,
+    });
+    followee.followersCount -= 1;
+
+    return {
+      ...(await this.userRepository.save(followee)),
+      following: false,
+    };
   }
 }
