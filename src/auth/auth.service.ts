@@ -2,21 +2,22 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@/user/user.service';
 import { RegisterUserInput } from '@/auth/input/register-user.input';
-import { Profile } from '@/profile/profile.model';
+import { Profile } from '@/user/profile.model';
 import { UserEntity } from '@/user/user.entity';
-import { JwtPayload } from '@/auth/jwt-payload.interface';
+import { JwtPayload } from '@/auth/jwt-payload.type';
 import * as bcrypt from 'bcrypt';
 import { ProfileAndToken } from '@/auth/profile-and-token.type';
 import { LoginUserInput } from '@/auth/input/login-user.input';
-import { UserRepository } from '@/user/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from '@/user/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
-    @InjectRepository(UserRepository) private userRepository: UserRepository,
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
   ) {}
 
   public async register(createUserInput: RegisterUserInput): Promise<Profile> {
@@ -32,10 +33,8 @@ export class AuthService {
     );
 
     return {
-      username: createdUser.username,
-      bio: createdUser.bio,
-      image: createdUser.image,
-      following: false, // can't really follow yourself
+      ...createdUser,
+      following: false,
     };
   }
 
@@ -43,13 +42,11 @@ export class AuthService {
     const { email, password } = loginUserInput;
     const user = await this.userRepository.findUserByEmail(email);
 
-    if (user.password === (await bcrypt.hash(password, user.salt))) {
+    if (await bcrypt.compare(password, user.password)) {
       const profileAndToken: ProfileAndToken = {
         profile: {
-          username: user.username,
-          bio: user.bio,
+          ...user,
           following: false, // can't really follow yourself
-          image: user.image,
         },
         token: this.getJwtToken(user),
       };
