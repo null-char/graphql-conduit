@@ -10,11 +10,4 @@ export class ArticleRepository extends Repository<ArticleEntity> {
 
     return article;
   }
-
-  public async getArticlesByTags(tags: string[]): Promise<ArticleEntity[]> {
-    const qb = this.createQueryBuilder('article');
-    qb.where('article.tagList LIKE (:tags)', { tags: `%${tags}%` });
-
-    return await qb.getMany();
-  }
 }
