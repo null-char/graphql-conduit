@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProfileAndToken } from '@/auth/profile-and-token.type';
 import { Response } from 'express';
-import { Profile } from '@/profile/profile.model';
+import { Profile } from '@/user/profile.model';
 
 @Injectable()
 export class SetJwtCookieInterceptor implements NestInterceptor {
