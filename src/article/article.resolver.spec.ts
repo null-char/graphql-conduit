@@ -4,15 +4,14 @@ import { ArticleService } from '@/article/article.service';
 import { UserEntity } from '@/user/user.entity';
 import { Article } from '@/article/article.model';
 import { ArticleRepository } from '@/article/article.repository';
-import { UserRepository } from '@/user/user.repository';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { FavoritesEntity } from '@/article/favorites.entity';
-import { Repository } from 'typeorm';
 import { CreateArticleInput } from '@/article/input/create-article.input';
 import { EditArticleInput } from '@/article/input/edit-article.input';
-import { Favorite } from '@/article/favorite.model';
-
-class MockFavoritesRepository extends Repository<FavoritesEntity> {}
+import { UserService } from '@/user/user.service';
+import { FollowsEntity } from '@/user/follows.entity';
+import { Repository } from 'typeorm';
+import { UserRepository } from '@/user/user.repository';
 
 describe('ArticleResolver', () => {
   let articleResolver: ArticleResolver;
@@ -26,10 +25,15 @@ describe('ArticleResolver', () => {
         ArticleResolver,
         ArticleService,
         ArticleRepository,
+        UserService,
         UserRepository,
         {
           provide: getRepositoryToken(FavoritesEntity),
-          useClass: MockFavoritesRepository,
+          useClass: class MockRepository extends Repository<FavoritesEntity> {},
+        },
+        {
+          provide: getRepositoryToken(FollowsEntity),
+          useClass: class MockRepository extends Repository<FollowsEntity> {},
         },
       ],
     }).compile();
@@ -82,14 +86,7 @@ describe('ArticleResolver', () => {
       body: 'body',
       tagList: ['tag1', 'tag2'],
     };
-    const mockResult: Article = {
-      ...mockInput,
-      id: 1,
-      favoritesCount: 0,
-      favorited: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    const mockResult: Article = new Article();
 
     const serviceCreateArticle = jest
       .spyOn(articleService, 'createArticle')
@@ -127,19 +124,37 @@ describe('ArticleResolver', () => {
 
   it('resolves "favoriteArticle" mutation', async () => {
     const mockId = 69;
-    const mockResult: Favorite = {
-      articleId: mockId,
-      userId: mockUser.id,
-    };
+    const mockResult: Article = new Article();
+    mockResult.id = mockId;
+    mockResult.favorited = true;
 
     const serviceFavoriteArticle = jest
       .spyOn(articleService, 'favoriteArticle')
       .mockResolvedValue(mockResult);
     const result = await articleResolver.favoriteArticle(mockId, mockUser);
 
-    expect(result).toBe<Favorite>(mockResult);
+    expect(result).toBe<Article>(mockResult);
     expect(serviceFavoriteArticle).toHaveBeenCalled();
     expect(serviceFavoriteArticle).toHaveBeenCalledWith<[number, UserEntity]>(
+      mockId,
+      mockUser,
+    );
+  });
+
+  it('resolves "unfavoriteArticle" mutation', async () => {
+    const mockId = 666;
+    const mockResult: Article = new Article();
+    mockResult.id = mockId;
+    mockResult.favorited = false;
+
+    const serviceUnfavoriteArticle = jest
+      .spyOn(articleService, 'unfavoriteArticle')
+      .mockResolvedValue(mockResult);
+    const result = await articleResolver.unfavoriteArticle(mockId, mockUser);
+
+    expect(result).toBe<Article>(mockResult);
+    expect(serviceUnfavoriteArticle).toHaveBeenCalled();
+    expect(serviceUnfavoriteArticle).toHaveBeenCalledWith<[number, UserEntity]>(
       mockId,
       mockUser,
     );
