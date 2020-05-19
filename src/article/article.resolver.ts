@@ -1,4 +1,12 @@
-import { Resolver, Query, Args, Int, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Int,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { Article } from '@/article/article.model';
 import { ArticleService } from '@/article/article.service';
 import { CreateArticleInput } from '@/article/input/create-article.input';
@@ -8,8 +16,8 @@ import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
 import { GetUser } from '@/shared/get-user.decorator';
 import { UserEntity } from '@/user/user.entity';
 import { FilterArticlesInput } from '@/article/input/filter-articles.input';
-import { Favorite } from '@/article/favorite.model';
 import { OptionalAuthGuard } from '@/auth/guard/optional-auth.guard';
+import { Profile } from '@/user/profile.model';
 
 @Resolver(of => Article)
 export class ArticleResolver {
@@ -35,6 +43,15 @@ export class ArticleResolver {
     @GetUser() user: UserEntity | undefined,
   ): Promise<Article[]> {
     return this.articleService.getArticles(filterArticlesInput, user);
+  }
+
+  @ResolveField('author', () => Profile)
+  @UseGuards(OptionalAuthGuard)
+  public async getAuthor(
+    @Parent() article: Article,
+    @GetUser() user: UserEntity | undefined,
+  ): Promise<Profile> {
+    return this.articleService.getAuthor(article, user);
   }
 
   @Mutation(returns => Article)
