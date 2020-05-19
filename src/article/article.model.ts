@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Profile } from '@/user/profile.model';
 
 @ObjectType()
 export class Article {
@@ -28,26 +29,15 @@ export class Article {
 
   @Field(type => Int)
   favoritesCount: number;
-}
 
-/* 
-{
-  "article": {
-    "slug": "how-to-train-your-dragon",
-    "title": "How to train your dragon",
-    "description": "Ever wonder how?",
-    "body": "It takes a Jacobian",
-    "tagList": ["dragons", "training"],
-    "createdAt": "2016-02-18T03:22:56.637Z",
-    "updatedAt": "2016-02-18T03:48:35.824Z",
-    "favorited": false,
-    "favoritesCount": 0,
-    "author": {
-      "username": "jake",
-      "bio": "I work at statefarm",
-      "image": "https://i.stack.imgur.com/xHWG8.jpg",
-      "following": false
-    }
-  }
+  /* 
+    This field is mainly used to help resolve the "author" field down below.
+    I don't want to expose user ids to the client. The usernames will be unique so we can fetch
+    the author that way.
+  */
+  @Field()
+  authorUsername: string;
+
+  @Field(type => Profile)
+  author: Profile;
 }
-*/
