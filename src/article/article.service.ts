@@ -50,11 +50,52 @@ export class ArticleService {
     return article;
   }
 
-  public async getArticlesTaggedWith(tags: string[]): Promise<Article[]> {
+  public async getArticles(
+    filterArticlesInput: FilterArticlesInput,
+    user: UserEntity | undefined,
+  ): Promise<Article[]> {
     const qb = this.articleRepository.createQueryBuilder('article');
-    qb.where('article.tagList LIKE (:tags)', { tags: `%${tags}%` });
+    const q = filterArticlesInput;
 
-    return await qb.getMany();
+    qb.where('1 = 1');
+
+    if (q) {
+      if (q.author) {
+        qb.andWhere('article.authorUsername = :username', {
+          username: q.author,
+        });
+      }
+
+      if (q.tags) {
+        qb.andWhere('article.tagList LIKE (:tags)', { tags: `%${q.tags}%` });
+      }
+
+      if (q.favorited) {
+        const user = await this.userRepository.findUserByUsername(q.favorited);
+
+        const favoritedArticles = await this.favoritesRepository.find({
+          where: { favoritedBy: user.id },
+        });
+        const ids = favoritedArticles.map(f => f.articleId);
+
+        qb.andWhereInIds(ids);
+      }
+    }
+
+    qb.orderBy('article.createdAt', 'DESC');
+    // only add favorited field if user is authenticated
+    if (user) {
+      this.addFavoritedToArticle(qb, user);
+    }
+
+    return qb.getMany();
+  }
+
+  public async getAuthor(
+    article: Article,
+    user: UserEntity | undefined,
+  ): Promise<Profile> {
+    return this.userService.getProfile(article.authorUsername, user);
   }
 
   public async createArticle(
