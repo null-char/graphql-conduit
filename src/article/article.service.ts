@@ -104,7 +104,7 @@ export class ArticleService {
   ): Promise<Article> {
     const article = {
       ...createArticleInput,
-      authorId: user.id,
+      authorUsername: user.username,
     };
     const createdArticle = await this.articleRepository.save(article);
 
@@ -121,7 +121,7 @@ export class ArticleService {
     const updatedArticle = await this.articleRepository.findArticleById(
       editArticleInput.id,
     );
-    if (updatedArticle.authorId !== user.id)
+    if (updatedArticle.authorUsername !== user.username)
       throw new ForbiddenException('You do not own this resource');
 
     for (const key in editArticleInput) {
