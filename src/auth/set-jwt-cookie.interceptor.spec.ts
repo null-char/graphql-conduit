@@ -1,7 +1,7 @@
 import { SetJwtCookieInterceptor } from '@/auth/set-jwt-cookie.interceptor';
 import { of } from 'rxjs';
 import { ProfileAndToken } from '@/auth/profile-and-token.type';
-import { Profile } from '@/profile/profile.model';
+import { Profile } from '@/user/profile.model';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
 
 const mockGqlCtx = {
@@ -33,7 +33,7 @@ const mockCallHandler: CallHandler<ProfileAndToken> = {
   handle: jest.fn().mockReturnValue(of(profileAndToken)),
 };
 
-describe('SetJwtCookieInterceptor unit test', () => {
+describe('SetJwtCookieInterceptor', () => {
   it('should be defined', () => {
     expect(interceptor).toBeDefined();
   });
