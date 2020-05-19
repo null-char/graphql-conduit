@@ -130,4 +130,56 @@ export class ArticleService {
 
     return await this.articleRepository.save(updatedArticle);
   }
+
+  public async favoriteArticle(id: number, user: UserEntity): Promise<Article> {
+    const userId = user.id;
+    await this.favoritesRepository.insert({
+      articleId: id,
+      favoritedBy: userId,
+    });
+
+    // increment article favorites count
+    const article = await this.articleRepository.findArticleById(id);
+    article.favoritesCount += 1;
+
+    return { ...(await this.articleRepository.save(article)), favorited: true };
+  }
+
+  public async unfavoriteArticle(
+    id: number,
+    user: UserEntity,
+  ): Promise<Article> {
+    const userId = user.id;
+    await this.favoritesRepository.delete({
+      articleId: id,
+      favoritedBy: userId,
+    });
+
+    // decrement article favorites count
+    const article = await this.articleRepository.findArticleById(id);
+    article.favoritesCount -= 1;
+
+    return {
+      ...(await this.articleRepository.save(article)),
+      favorited: false,
+    };
+  }
+
+  // convenience function for mapping to "favorited" field
+  private addFavoritedToArticle(
+    qb: SelectQueryBuilder<ArticleEntity>,
+    user: UserEntity,
+    alias = 'article',
+  ): void {
+    qb.addSelect(
+      `${alias}.id IN ` +
+        qb
+          .subQuery()
+          .select('fav.articleId')
+          .from(FavoritesEntity, 'fav')
+          .where({ userId: user.id })
+          .getQuery(),
+      `${alias}_favorited`,
+    );
+  }
 }
