@@ -54,4 +54,12 @@ export class ArticleEntity {
   )
   @JoinColumn({ name: 'authorUsername', referencedColumnName: 'username' })
   author: UserEntity;
+
+  /* 
+    Not actually for storage in the database.
+    This property is mapped to either false / true if user is authenticated.
+    Since we still don't have an addSelectAndMap this "hack" is employed.
+  */
+  @Column('boolean', { select: false, nullable: true })
+  favorited: boolean;
 }
