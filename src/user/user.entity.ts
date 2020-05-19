@@ -35,6 +35,13 @@ export class UserEntity {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Column({ default: 0 })
+  @Check(`"followersCount" >= 0`)
+  followersCount: number;
+
+  @Column('boolean', { select: false, nullable: true })
+  following: boolean;
+
   @OneToMany(
     type => ArticleEntity,
     article => article.author,
