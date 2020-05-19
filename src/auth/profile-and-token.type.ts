@@ -1,5 +1,4 @@
-import { Profile } from '@/profile/profile.model';
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Profile } from '@/user/profile.model';
 
 export class ProfileAndToken {
   profile: Profile;
