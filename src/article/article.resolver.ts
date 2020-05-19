@@ -74,12 +74,21 @@ export class ArticleResolver {
     return this.articleService.editArticle(editArticleInput, user);
   }
 
-  @Mutation(returns => Favorite)
+  @Mutation(returns => Article)
   @UseGuards(GqlAuthGuard)
   public async favoriteArticle(
     @Args('id', { type: () => Int }) id: number,
     @GetUser() user: UserEntity,
-  ): Promise<Favorite> {
+  ): Promise<Article> {
     return this.articleService.favoriteArticle(id, user);
+  }
+
+  @Mutation(returns => Article)
+  @UseGuards(GqlAuthGuard)
+  public async unfavoriteArticle(
+    @Args('id', { type: () => Int }) id: number,
+    @GetUser() user: UserEntity,
+  ): Promise<Article> {
+    return this.articleService.unfavoriteArticle(id, user);
   }
 }
