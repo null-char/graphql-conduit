@@ -4,21 +4,20 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
-  Unique,
+  Check,
 } from 'typeorm';
 import { ArticleEntity } from '@/article/article.entity';
 import { CommentEntity } from '@/comment/comment.entity';
 
 @Entity('users')
-@Unique(['username', 'email'])
 export class UserEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column({ default: null, nullable: true })
