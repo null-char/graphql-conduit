@@ -10,4 +10,5 @@ export const TestingOrmConfig: TypeOrmModuleOptions = {
   entities: ['dist/**/*.entity{.ts,.js}', 'src/**/*.entity{.ts,.js}'],
   synchronize: true,
   dropSchema: true,
+  logging: true,
 };
