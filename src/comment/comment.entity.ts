@@ -31,6 +31,7 @@ export class CommentEntity {
   updatedAt: Date;
 
   @ManyToOne(
+    /* istanbul ignore next */
     type => ArticleEntity,
     article => article.comments,
   )
@@ -38,6 +39,7 @@ export class CommentEntity {
   article: ArticleEntity;
 
   @ManyToOne(
+    /* istanbul ignore next */
     type => UserEntity,
     user => user.comments,
     { eager: true },

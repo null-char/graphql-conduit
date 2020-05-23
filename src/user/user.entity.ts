@@ -43,12 +43,14 @@ export class UserEntity {
   following: boolean;
 
   @OneToMany(
+    /* istanbul ignore next */
     type => ArticleEntity,
     article => article.author,
   )
   articles: ArticleEntity[];
 
   @OneToMany(
+    /* istanbul ignore next */
     type => CommentEntity,
     comment => comment.author,
   )

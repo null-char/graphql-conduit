@@ -43,12 +43,14 @@ export class ArticleEntity {
   favoritesCount: number;
 
   @OneToMany(
+    /* istanbul ignore next */
     type => CommentEntity,
     comment => comment.article,
   )
   comments: CommentEntity[];
 
   @ManyToOne(
+    /* istanbul ignore next */
     type => UserEntity,
     user => user.articles,
   )
