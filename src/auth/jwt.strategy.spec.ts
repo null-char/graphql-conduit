@@ -19,10 +19,7 @@ describe('JwtStrategy', () => {
       providers: [
         JwtStrategy,
         UserService,
-        {
-          provide: getRepositoryToken(UserEntity),
-          useClass: class MockRepository extends Repository<UserEntity> {},
-        },
+        UserRepository,
         {
           provide: getRepositoryToken(FollowsEntity),
           useClass: class MockRepository extends Repository<FollowsEntity> {},
