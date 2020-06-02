@@ -6,29 +6,30 @@ import { UserEntity } from '@/user/user.entity';
 import { GetUser } from '@/shared/get-user.decorator';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
+import { returnType as returns, returnType as type } from '@/utils/return-type';
 
-@Resolver(of => Comment)
+@Resolver(Comment)
 export class CommentResolver {
   constructor(private commentService: CommentService) {}
 
-  @Query(returns => [Comment], { name: 'comments' })
+  @Query(returns([Comment]), { name: 'comments' })
   public async getComments(
-    @Args('articleId', { type: () => Int }) articleId: number,
+    @Args('articleId', { type: type(Int) }) articleId: number,
   ): Promise<Comment[]> {
     return this.commentService.getComments(articleId);
   }
 
-  @Query(returns => Comment, { name: 'comment' })
+  @Query(returns(Comment), { name: 'comment' })
   public async getComment(
-    @Args('commentId', { type: () => Int }) commentId: number,
+    @Args('commentId', { type: type(Int) }) commentId: number,
   ): Promise<Comment> {
     return this.commentService.getComment(commentId);
   }
 
-  @Mutation(returns => Comment)
+  @Mutation(returns(Comment))
   @UseGuards(GqlAuthGuard)
   public async createComment(
-    @Args('createCommentInput', { type: () => CreateCommentInput })
+    @Args('createCommentInput', { type: type(CreateCommentInput) })
     createCommentInput: CreateCommentInput,
     @GetUser() user: UserEntity,
   ): Promise<Comment> {

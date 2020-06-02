@@ -1,12 +1,13 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Profile } from '@/user/profile.model';
+import { returnType as type } from '@/utils/return-type';
 
 @ObjectType()
 export class Comment {
-  @Field(type => Int)
+  @Field(type(Int))
   id: number;
 
-  @Field(type => Int)
+  @Field(type(Int))
   articleId: number;
 
   @Field()
@@ -21,6 +22,6 @@ export class Comment {
   @Field()
   updatedAt: Date;
 
-  @Field(type => Profile)
+  @Field(type(Profile))
   author: Profile;
 }
