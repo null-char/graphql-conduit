@@ -6,23 +6,24 @@ import { LoginUserInput } from '@/auth/input/login-user.input';
 import { ProfileAndToken } from '@/auth/profile-and-token.type';
 import { UseInterceptors } from '@nestjs/common';
 import { SetJwtCookieInterceptor } from '@/auth/set-jwt-cookie.interceptor';
+import { returnType as returns, returnType as type } from '@/utils/return-type';
 
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Mutation(returns => Profile)
+  @Mutation(returns(Profile))
   public async registerUser(
-    @Args('createUserInput', { type: () => RegisterUserInput })
-    createUserInput: RegisterUserInput,
+    @Args('createUserInput', { type: type(RegisterUserInput) })
+    registerUserInput: RegisterUserInput,
   ): Promise<Profile> {
-    return this.authService.register(createUserInput);
+    return this.authService.register(registerUserInput);
   }
 
-  @Mutation(returns => Profile)
+  @Mutation(returns(Profile))
   @UseInterceptors(SetJwtCookieInterceptor)
   public async loginUser(
-    @Args('loginUserInput', { type: () => LoginUserInput })
+    @Args('loginUserInput', { type: type(LoginUserInput) })
     loginUserInput: LoginUserInput,
   ): Promise<ProfileAndToken> {
     return this.authService.login(loginUserInput);

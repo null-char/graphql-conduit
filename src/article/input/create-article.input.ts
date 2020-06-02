@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { MinLength, IsOptional, Length } from 'class-validator';
+import { returnType as type } from '@/utils/return-type';
 
 @InputType()
 export class CreateArticleInput {
@@ -16,6 +17,6 @@ export class CreateArticleInput {
   @Field()
   body: string;
 
-  @Field(type => [String])
+  @Field(type([String]))
   tagList: string[];
 }

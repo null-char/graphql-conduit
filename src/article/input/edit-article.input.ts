@@ -1,9 +1,10 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
+import { returnType as type } from '@/utils/return-type';
 
 @InputType()
 export class EditArticleInput {
-  @Field(type => Int)
+  @Field(type(Int))
   id: number;
 
   @IsOptional()
@@ -19,6 +20,6 @@ export class EditArticleInput {
   body?: string;
 
   @IsOptional()
-  @Field(type => [String], { nullable: true })
+  @Field(type([String]), { nullable: true })
   tagList?: string[];
 }
