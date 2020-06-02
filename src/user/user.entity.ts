@@ -45,6 +45,7 @@ export class UserEntity {
   @OneToMany(
     /* istanbul ignore next */
     type => ArticleEntity,
+    /* istanbul ignore next */
     article => article.author,
   )
   articles: ArticleEntity[];
@@ -52,6 +53,7 @@ export class UserEntity {
   @OneToMany(
     /* istanbul ignore next */
     type => CommentEntity,
+    /* istanbul ignore next */
     comment => comment.author,
   )
   comments: CommentEntity[];
