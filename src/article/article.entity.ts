@@ -45,6 +45,7 @@ export class ArticleEntity {
   @OneToMany(
     /* istanbul ignore next */
     type => CommentEntity,
+    /* istanbul ignore next */
     comment => comment.article,
   )
   comments: CommentEntity[];
@@ -52,6 +53,7 @@ export class ArticleEntity {
   @ManyToOne(
     /* istanbul ignore next */
     type => UserEntity,
+    /* istanbul ignore next */
     user => user.articles,
   )
   @JoinColumn({ name: 'authorUsername', referencedColumnName: 'username' })
