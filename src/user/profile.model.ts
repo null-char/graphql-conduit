@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { returnType as type } from '@/utils/return-type';
 
 @ObjectType()
 export class Profile {
@@ -14,6 +15,6 @@ export class Profile {
   @Field()
   following: boolean;
 
-  @Field(type => Int)
+  @Field(type(Int))
   followersCount: number;
 }

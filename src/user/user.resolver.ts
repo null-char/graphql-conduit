@@ -6,21 +6,22 @@ import { UserService } from '@/user/user.service';
 import { GetUser } from '@/shared/get-user.decorator';
 import { UserEntity } from '@/user/user.entity';
 import { OptionalAuthGuard } from '@/auth/guard/optional-auth.guard';
+import { returnType as returns } from '@/utils/return-type';
 
-@Resolver(of => Profile)
+@Resolver(Profile)
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @Query(returns => Profile, { name: 'profile' })
+  @Query(returns(Profile), { name: 'profile' })
   @UseGuards(OptionalAuthGuard)
-  public getProfile(
+  public async getProfile(
     @Args('username') username: string,
     @GetUser() user: UserEntity | undefined,
   ): Promise<Profile> {
     return this.userService.getProfile(username, user);
   }
 
-  @Mutation(returns => Profile)
+  @Mutation(returns(Profile))
   @UseGuards(GqlAuthGuard)
   public async followUser(
     @Args('followeeUsername') followeeUsername: string,
@@ -29,7 +30,7 @@ export class UserResolver {
     return this.userService.followUser(user, followeeUsername);
   }
 
-  @Mutation(returns => Profile)
+  @Mutation(returns(Profile))
   @UseGuards(GqlAuthGuard)
   public async unfollowUser(
     @Args('followeeUsername') followeeUsername: string,
