@@ -1,9 +1,10 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Profile } from '@/user/profile.model';
+import { returnType as type } from '@/utils/return-type';
 
 @ObjectType()
 export class Article {
-  @Field(type => Int)
+  @Field(type(Int))
   id: number;
 
   @Field()
@@ -15,7 +16,7 @@ export class Article {
   @Field()
   body: string;
 
-  @Field(type => [String])
+  @Field(type([String]))
   tagList: string[];
 
   @Field()
@@ -27,7 +28,7 @@ export class Article {
   @Field({ defaultValue: false, nullable: true })
   favorited?: boolean;
 
-  @Field(type => Int)
+  @Field(type(Int))
   favoritesCount: number;
 
   /* 
@@ -38,6 +39,6 @@ export class Article {
   @Field()
   authorUsername: string;
 
-  @Field(type => Profile)
+  @Field(type(Profile))
   author: Profile;
 }
