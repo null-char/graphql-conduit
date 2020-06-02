@@ -12,6 +12,7 @@ import { UserService } from '@/user/user.service';
 import { FollowsEntity } from '@/user/follows.entity';
 import { Repository } from 'typeorm';
 import { UserRepository } from '@/user/user.repository';
+import { Profile } from '@/user/profile.model';
 
 describe('ArticleResolver', () => {
   let articleResolver: ArticleResolver;
@@ -156,6 +157,22 @@ describe('ArticleResolver', () => {
     expect(serviceUnfavoriteArticle).toHaveBeenCalled();
     expect(serviceUnfavoriteArticle).toHaveBeenCalledWith<[number, UserEntity]>(
       mockId,
+      mockUser,
+    );
+  });
+
+  it('resolves "author" field', async () => {
+    const mockArticle = new Article();
+    const mockAuthor = new Profile();
+    const serviceGetAuthor = jest
+      .spyOn(articleService, 'getAuthor')
+      .mockResolvedValue(mockAuthor);
+
+    expect(await articleResolver.getAuthor(mockArticle, mockUser)).toBe<
+      Profile
+    >(mockAuthor);
+    expect(serviceGetAuthor).toHaveBeenCalledWith<[Article, UserEntity]>(
+      mockArticle,
       mockUser,
     );
   });
