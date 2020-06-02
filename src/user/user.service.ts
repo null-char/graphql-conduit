@@ -31,6 +31,7 @@ export class UserService {
     const userWithSameUsername = await this.userRepository.findOne({
       where: { username },
     });
+
     if (userWithSameUsername) {
       throw new ConflictException('User with same username already exists');
     }
@@ -45,7 +46,10 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  public async getProfile(username: string, user: UserEntity | undefined) {
+  public async getProfile(
+    username: string,
+    user: UserEntity | undefined,
+  ): Promise<Profile> {
     const qb = this.userRepository.createQueryBuilder('u');
     qb.where('u.username = :username', { username });
 
