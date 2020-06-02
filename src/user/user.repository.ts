@@ -9,6 +9,7 @@ export class UserRepository extends Repository<UserEntity> {
     if (!user)
       throw new NotFoundException(`User with username ${username} not found`);
 
+    user.following = null;
     return user;
   }
 
@@ -17,6 +18,7 @@ export class UserRepository extends Repository<UserEntity> {
     if (!user)
       throw new NotFoundException(`User with email ${email} not found`);
 
+    user.following = null;
     return user;
   }
 
@@ -29,6 +31,7 @@ export class UserRepository extends Repository<UserEntity> {
     if (!user)
       throw new NotFoundException(`User with the requested id not found`);
 
+    user.following = null;
     return user;
   }
 }
