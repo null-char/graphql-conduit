@@ -5,7 +5,7 @@ import { RegisterUserInput } from '@/auth/input/register-user.input';
 import { Profile } from '@/user/profile.model';
 import { UserEntity } from '@/user/user.entity';
 import { JwtPayload } from '@/auth/jwt-payload.type';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { ProfileAndToken } from '@/auth/profile-and-token.type';
 import { LoginUserInput } from '@/auth/input/login-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,8 +20,10 @@ export class AuthService {
     private userRepository: UserRepository,
   ) {}
 
-  public async register(createUserInput: RegisterUserInput): Promise<Profile> {
-    const { username, password, email } = createUserInput;
+  public async register(
+    registerUserInput: RegisterUserInput,
+  ): Promise<Profile> {
+    const { username, password, email } = registerUserInput;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -53,6 +55,7 @@ export class AuthService {
 
       return profileAndToken;
     }
+
     throw new UnauthorizedException('Invalid password');
   }
 
