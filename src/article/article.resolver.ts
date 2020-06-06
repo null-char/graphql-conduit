@@ -11,6 +11,7 @@ import { Article } from '@/article/article.model';
 import { ArticleService } from '@/article/article.service';
 import { CreateArticleInput } from '@/article/input/create-article.input';
 import { EditArticleInput } from '@/article/input/edit-article.input';
+import { QueryOptionsInput } from '@/article/input/query-options.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
 import { GetUser } from '@/shared/get-user.decorator';
@@ -38,12 +39,19 @@ export class ArticleResolver {
   public async getArticles(
     @Args('filterArticlesInput', {
       type: type(FilterArticlesInput),
-      nullable: true,
     })
     filterArticlesInput: FilterArticlesInput,
+    @Args('queryOptionsInput', {
+      type: type(QueryOptionsInput),
+    })
+    queryOptionsInput: QueryOptionsInput,
     @GetUser() user: UserEntity | undefined,
   ): Promise<Article[]> {
-    return this.articleService.getArticles(filterArticlesInput, user);
+    return this.articleService.getArticles(
+      filterArticlesInput,
+      queryOptionsInput,
+      user,
+    );
   }
 
   @ResolveField('author', type(Profile))
