@@ -7,7 +7,7 @@ export class ArticleRepository extends Repository<ArticleEntity> {
   public async findArticleById(id: number): Promise<ArticleEntity> {
     const article = await this.findOne(id);
     if (!article) throw new NotFoundException('Article not found');
-
+    article.favorited = null;
     return article;
   }
 }
