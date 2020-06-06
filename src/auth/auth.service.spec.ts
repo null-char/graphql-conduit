@@ -128,15 +128,11 @@ describe('AuthService', () => {
         .mockResolvedValue(false);
 
       // should throw an error since compare returns false
-      try {
-        const result = await authService.login(mockInput);
-        expect(result).toBeUndefined();
-      } catch (err) {
-        expect(err).toBeDefined();
-        expect(err).toBeInstanceOf(UnauthorizedException);
-        expect(findUserByEmail).toHaveBeenCalled();
-        expect(bcryptCompare).toHaveBeenCalled();
-      }
+      await expect(authService.login(mockInput)).rejects.toThrowError(
+        UnauthorizedException,
+      );
+      expect(findUserByEmail).toHaveBeenCalled();
+      expect(bcryptCompare).toHaveBeenCalled();
     });
   });
 });

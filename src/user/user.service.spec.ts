@@ -82,14 +82,8 @@ describe('UserService', () => {
         .spyOn(userRepository, 'findOne')
         .mockResolvedValueOnce(new UserEntity());
 
-      try {
-        const result = await serviceCreateUser();
-        expect(result).toBeUndefined();
-      } catch (err) {
-        expect(repositoryFindOne).toHaveBeenCalled();
-        expect(err).toBeDefined();
-        expect(err).toBeInstanceOf(ConflictException);
-      }
+      await expect(serviceCreateUser()).rejects.toThrowError(ConflictException);
+      expect(repositoryFindOne).toHaveBeenCalled();
     });
 
     it('throws an error if user with same username exists', async () => {
@@ -99,14 +93,8 @@ describe('UserService', () => {
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(new UserEntity());
 
-      try {
-        const result = await serviceCreateUser();
-        expect(result).toBeUndefined();
-      } catch (err) {
-        expect(repositoryFindOne).toHaveBeenCalled();
-        expect(err).toBeDefined();
-        expect(err).toBeInstanceOf(ConflictException);
-      }
+      await expect(serviceCreateUser()).rejects.toThrowError(ConflictException);
+      expect(repositoryFindOne).toHaveBeenCalled();
     });
   });
 
@@ -137,10 +125,6 @@ describe('UserService', () => {
       );
     });
 
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('gets a profile for an unauthenticated user', async () => {
       const createQB = jest
         .spyOn(userRepository, 'createQueryBuilder')
@@ -152,7 +136,6 @@ describe('UserService', () => {
       expect(createQB).toHaveBeenCalled();
       expect(whereSpy).toHaveBeenCalled();
       expect(getOneSpy).toHaveBeenCalled();
-
       // make sure we don't map "following" column if user is undefined
       expect(addSelectSpy).not.toHaveBeenCalled();
     });
@@ -170,7 +153,6 @@ describe('UserService', () => {
       expect(whereSpy).toHaveBeenCalled();
       // make sure we map the "following" column
       expect(addSelectSpy).toHaveBeenCalled();
-
       expect(getOneSpy).toHaveBeenCalled();
     });
   });
@@ -179,7 +161,8 @@ describe('UserService', () => {
     it('follows a user given a valid followeeUsername', async () => {
       const mockUser = new UserEntity();
       const mockFollowee = new UserEntity();
-      mockFollowee.followersCount = 0;
+      const startingFollowersCount = 0;
+      mockFollowee.followersCount = startingFollowersCount;
       const findUserByUsername = jest
         .spyOn(userRepository, 'findUserByUsername')
         .mockResolvedValue(mockFollowee);
@@ -197,8 +180,8 @@ describe('UserService', () => {
       expect(findUserByUsername).toHaveBeenCalled();
       expect(followsRepositoryInsert).toHaveBeenCalled();
       expect(userRepositorySave).toHaveBeenCalled();
-      // mockFollowee's followers count will have increased to 1 now
-      expect(result.followersCount).toBe(mockFollowee.followersCount);
+      // mockFollowee's followers count will have increased by 1 now
+      expect(result.followersCount).toBe(startingFollowersCount + 1);
       expect(result.following).toBe(true);
     });
   });
@@ -207,7 +190,8 @@ describe('UserService', () => {
     it('unfollows a user given a valid followeeUsername', async () => {
       const mockUser = new UserEntity();
       const mockFollowee = new UserEntity();
-      mockFollowee.followersCount = 1;
+      const startingFollowersCount = 1;
+      mockFollowee.followersCount = startingFollowersCount;
       const findUserByUsername = jest
         .spyOn(userRepository, 'findUserByUsername')
         .mockResolvedValue(mockFollowee);
@@ -225,8 +209,8 @@ describe('UserService', () => {
       expect(findUserByUsername).toHaveBeenCalled();
       expect(followsRepositoryDelete).toHaveBeenCalled();
       expect(userRepositorySave).toHaveBeenCalled();
-      // mockFollowee's followers count will have decreased to 0 now
-      expect(result.followersCount).toBe(mockFollowee.followersCount);
+      // mockFollowee's followers count will have decreased by 1 now
+      expect(result.followersCount).toBe(startingFollowersCount - 1);
       expect(result.following).toBe(false);
     });
   });

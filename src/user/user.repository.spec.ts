@@ -2,85 +2,95 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '@/user/user.repository';
 import { UserEntity } from '@/user/user.entity';
 import { NotFoundException } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestingOrmConfig } from '@/config/testing-orm.config';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
-  let mockUser: UserEntity;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(TestingOrmConfig),
-        TypeOrmModule.forFeature([UserRepository]),
-      ],
       providers: [UserRepository],
     }).compile();
 
     userRepository = module.get<UserRepository>(UserRepository);
-
-    // make a mock user to test against
-    const mockUserDetails = {
-      username: 'test',
-      password: 'password',
-      salt: 'salt',
-      email: 'test@test.com',
-    };
-    mockUser = await userRepository.save(mockUserDetails);
   });
 
   describe('findUserByUsername', () => {
     it('finds a user by username', async () => {
-      const result = await userRepository.findUserByUsername(mockUser.username);
+      const mockUser = new UserEntity();
+      const findOne = jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser);
 
-      expect(result).toMatchObject<UserEntity>(mockUser);
+      expect(await userRepository.findUserByUsername(mockUser.username)).toBe<
+        UserEntity
+      >(mockUser);
+      expect(findOne).toHaveBeenCalled();
     });
 
     it('throws a NotFoundException if user does not exist', async () => {
-      try {
-        const result = await userRepository.findUserByUsername('fake');
-        expect(result).toBeUndefined();
-      } catch (err) {
-        expect(err).toBeDefined();
-        expect(err).toBeInstanceOf(NotFoundException);
-      }
+      const mockUser = undefined;
+      const findOne = jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser);
+
+      await expect(
+        userRepository.findUserByUsername('fake'),
+      ).rejects.toThrowError(NotFoundException);
+      expect(findOne).toHaveBeenCalled();
     });
   });
 
   describe('findUserByEmail', () => {
     it('finds a user by email', async () => {
-      const result = await userRepository.findUserByEmail(mockUser.email);
+      const mockUser = new UserEntity();
+      mockUser.email = 'test@test.com';
+      const findOne = jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser);
 
-      expect(result).toMatchObject<UserEntity>(mockUser);
+      expect(await userRepository.findUserByEmail(mockUser.email)).toBe<
+        UserEntity
+      >(mockUser);
+      expect(findOne).toHaveBeenCalled();
     });
 
     it('throws a NotFoundException if user does not exist', async () => {
-      try {
-        const result = await userRepository.findUserByEmail('fake@fake.com');
-        expect(result).toBeUndefined();
-      } catch (err) {
-        expect(err).toBeDefined();
-        expect(err).toBeInstanceOf(NotFoundException);
-      }
+      const mockUser = undefined;
+      const findOne = jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser);
+
+      await expect(
+        userRepository.findUserByEmail('fake@fake.com'),
+      ).rejects.toThrowError(NotFoundException);
+      expect(findOne).toHaveBeenCalled();
     });
   });
 
   describe('findUserById', () => {
     it('finds a user by id', async () => {
-      const result = await userRepository.findUserById(1);
+      const mockUser = new UserEntity();
+      mockUser.id = 1;
+      const findOne = jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser);
 
-      expect(result).toMatchObject<UserEntity>(mockUser);
+      expect(await userRepository.findUserById(mockUser.id)).toBe<UserEntity>(
+        mockUser,
+      );
+      expect(findOne).toHaveBeenCalled();
     });
 
     it('throws a NotFoundException if user does not exist', async () => {
-      try {
-        const result = await userRepository.findUserById(8734982);
-        expect(result).toBeUndefined();
-      } catch (err) {
-        expect(err).toBeDefined();
-        expect(err).toBeInstanceOf(NotFoundException);
-      }
+      const mockUser = undefined;
+      const findOne = jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue(mockUser);
+
+      await expect(userRepository.findUserById(8734982)).rejects.toThrowError(
+        NotFoundException,
+      );
+      expect(findOne).toHaveBeenCalled();
     });
   });
 });
