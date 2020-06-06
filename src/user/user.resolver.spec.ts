@@ -4,7 +4,7 @@ import { UserResolver } from '@/user/user.resolver';
 import { UserEntity } from '@/user/user.entity';
 import { Profile } from '@/user/profile.model';
 import { UserRepository } from '@/user/user.repository';
-import { getRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { FollowsEntity } from '@/user/follows.entity';
 
