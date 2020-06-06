@@ -7,5 +7,9 @@
   "database": "graphql_conduit",
   "entities": ["dist/**/*.entity{.ts,.js}"],
   "synchronize": true,
-  "logging": true
+  "logging": true,
+  "migrations": ["dist/migration/*.js"],
+  "cli": {
+    "migrationsDir": "src/migration/"
+  }
 }
