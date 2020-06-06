@@ -13,6 +13,7 @@ import { FollowsEntity } from '@/user/follows.entity';
 import { Repository } from 'typeorm';
 import { UserRepository } from '@/user/user.repository';
 import { Profile } from '@/user/profile.model';
+import { QueryOptionsInput } from '@/article/input/query-options.input';
 
 describe('ArticleResolver', () => {
   let articleResolver: ArticleResolver;
@@ -66,18 +67,25 @@ describe('ArticleResolver', () => {
 
   it('resolves "articles" query', async () => {
     const mockResult = [new Article(), new Article()];
+    const mockQueryInput: QueryOptionsInput = {
+      limit: 10,
+      offset: 10,
+    };
     const serviceGetArticles = jest
       .spyOn(articleService, 'getArticles')
       .mockResolvedValue(mockResult);
 
-    expect(await articleResolver.getArticles(undefined, mockUser)).toBe<
-      Article[]
-    >(mockResult);
+    expect(
+      await articleResolver.getArticles(
+        undefined,
+        { limit: 10, offset: 10 },
+        mockUser,
+      ),
+    ).toBe<Article[]>(mockResult);
     expect(serviceGetArticles).toHaveBeenCalled();
-    expect(serviceGetArticles).toHaveBeenCalledWith<[undefined, UserEntity]>(
-      undefined,
-      mockUser,
-    );
+    expect(serviceGetArticles).toHaveBeenCalledWith<
+      [undefined, QueryOptionsInput, UserEntity]
+    >(undefined, mockQueryInput, mockUser);
   });
 
   it('resolves "createArticle" mutation', async () => {
