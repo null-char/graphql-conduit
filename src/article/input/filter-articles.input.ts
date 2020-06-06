@@ -10,13 +10,13 @@ export class FilterArticlesInput {
   @Field(type([String]), { nullable: true })
   @IsOptional()
   @IsArray()
-  tags: string[];
+  tags?: string[];
 
   @Field({ nullable: true })
   @IsOptional()
-  author: string;
+  author?: string;
 
   @Field({ nullable: true })
   @IsOptional()
-  favorited: string; // could be username
+  favorited?: string; // could be username
 }
