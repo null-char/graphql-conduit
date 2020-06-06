@@ -88,6 +88,14 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!**/*.module.ts",
+      "!**/config/**",
+      "!**/migration/**",
+      "!**/main.ts",
+      "!**/node_modules/**"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
