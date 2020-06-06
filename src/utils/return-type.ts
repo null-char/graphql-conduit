@@ -1,4 +1,4 @@
-import { ReturnTypeFuncValue } from '@nestjs/graphql';
+import { ReturnTypeFuncValue, ReturnTypeFunc } from '@nestjs/graphql';
 
 /**
  * A synctatic sugar function which simply takes in a GraphQL type and returns it.
@@ -11,9 +11,9 @@ import { ReturnTypeFuncValue } from '@nestjs/graphql';
  * Query(returns(Int), {name: 'numbers'})
  * @example
  * // aliased as 'type'
- * Field(type(ArticleEntity))
+ * Field(type(Article))
  */
-export function returnType(t: ReturnTypeFuncValue): () => ReturnTypeFuncValue;
+export function returnType(t: ReturnTypeFuncValue): ReturnTypeFunc;
 export function returnType(t: any): any {
-  return t;
+  return () => t;
 }
